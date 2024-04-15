@@ -1,8 +1,14 @@
 use rayon::prelude::*;
 
-fn main() -> Result<(), String> {
+fn main() {
     let args: Vec<String> = std::env::args().collect();
-    if args.len() < 2 {
+    if let Err(e) = hash_or_crack(&args) {
+        exit_with_error(&e, &args[0]);
+    }
+}
+
+fn hash_or_crack(args: &[String]) -> Result<(), String> {
+    if args.len() < 3 {
         return Err("Invalid input count".to_owned());
     }
     let mode = &args[1];
@@ -27,4 +33,14 @@ fn crack(number: u32) {
             println!("{n}");
         }
     });
+}
+
+fn exit_with_error(error: &str, arg_0: &str) {
+    eprintln!(
+        "{error}
+Usage examples:
+    Hash account nubmer:  {arg_0} hash 12345678901
+    Crack account number: {arg_0} crack 537983508"
+    );
+    std::process::exit(1);
 }
